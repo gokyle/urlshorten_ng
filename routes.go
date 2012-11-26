@@ -122,7 +122,7 @@ func topRoute(w http.ResponseWriter, r *http.Request) {
 			log.Printf("[+] error updating views: %s\n",
 				err.Error())
 		}
-                LogRequest(nil, r)
+		LogRequest(nil, r)
 		http.Redirect(w, r, url, 301)
 		return
 	}
@@ -157,6 +157,10 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 			return
 		} else if surl != "" && surl != url {
 			err = fmt.Errorf("URL already present.")
+			if err != nil {
+				serveErr(page, err, w, r)
+				return
+			}
 			sid, db_err := urlToSid(url)
 			if db_err == nil {
 				page.ShortCode = sid
