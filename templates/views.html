@@ -72,73 +72,8 @@
             is <a href="https://github.com/gokyle/urlshorten_ng">online</a>.
             It is based on the <a href="https://gokyle.github.com/webshell/">
             webshell</a> framework.</p>
-{{if .Posted}}
-          <p>Your shortened URL is: <a href="{{.Scheme}}://{{.Host}}/{{.ShortCode}}">
-          {{.Host}}/{{.ShortCode}}</a>.</p>
-          <p><a href="/">Shorten another?</a></p>
-{{end}}
-{{if .ShowErr}}
-          <h5 style="text-align:center;color:red">{{.Err}}</h5>
-{{end}}
 
-  <form class="form-horizontal" action="/" method="post">
-    <fieldset>
-      <div id="legend" class="">
-        <legend class="" style="text-align:center">Shorten a URL</legend>
-      </div>
-    
-<div class="control-group">
-
-          <!-- Text input-->
-          <label class="control-label" for="input01">URL</label>
-          <div class="controls">
-            <input name="url" type="text" placeholder="" class="input-xlarge">
-            <p class="help-block">The URL to be shortened.</p>
-          </div>
-        </div>
-
-    <div class="control-group">
-
-          <!-- Text input-->
-          <label class="control-label" for="input01">User</label>
-          <div class="controls">
-            <input name="user" type="text" placeholder="" class="input-xlarge">
-            <p class="help-block">User to authenticate as.</p>
-          </div>
-        </div>
-
-    <div class="control-group">
-
-          <!-- Text input-->
-          <label class="control-label" for="input01">Pass</label>
-          <div class="controls">
-            <input name="pass" type="password" placeholder="" class="input-xlarge">
-            <p class="help-block">Password for user.</p>
-          </div>
-        </div>
-
-    <div class="control-group">
-
-          <!-- Text input-->
-          <label class="control-label" for="input01">Short</label>
-          <div class="controls">
-            <input name="sid" type="text" placeholder="" class="input-xlarge">
-            <p class="help-block">Optional shortcode for the URL.</p>
-          </div>
-        </div>
-
-  <div class="control-group">
-          <label class="control-label"></label>
-
-          <!-- Button -->
-          <div class="controls" style="text-align:center">
-            <button type="submit" class="btn btn-primary">Shorten</button>
-          </div>
-        </div>
-
-    </fieldset>
-  </form>
-
+            <p>{{.Sid}} has {{.Views}}.</p>
           </div>
           <div class="span2"></div>
         </div>
