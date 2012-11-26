@@ -154,3 +154,30 @@ func dbChangePass(username, password, new_password string) (err error) {
 	}
 	return
 }
+
+func userExists(username string) (ok bool, err error) {
+	db, err := dbConnect()
+	if err != nil {
+		return
+	}
+	var n int
+	rows := db.QueryRow("select count(*) from users where username=?",
+		username)
+	err = rows.Scan(&n)
+	if err != nil {
+		return
+	}
+	ok = (n == 1)
+	return
+}
+
+func addUserToDb(username, password string) (err error) {
+	ph := pbkdf2.HashPassword(password)
+	query := "insert into users values (?, ?, ?)"
+	db, err := dbConnect()
+	if err != nil {
+		return
+	}
+	_, err = db.Exec(query, username, ph.Hash, ph.Salt)
+	return
+}

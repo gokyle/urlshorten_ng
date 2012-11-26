@@ -52,7 +52,7 @@ func ValidateShortenedUrl(shortid string) (ok bool, err error) {
 	url, err := lookupShortCode(shortid)
 	if err != nil {
 		return
-	} else if len(url) != 0 {
+	} else if len(url) == 0 {
 		ok = true
 	}
 	return

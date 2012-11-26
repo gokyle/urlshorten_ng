@@ -59,6 +59,16 @@ func main() {
 		if conf["server"]["authenticate"] == "false" {
 			check_auth = false
 		}
+
+		if conf["server"]["admin_user"] != "" {
+			admin_user = conf["server"]["admin_user"]
+			ok, err := userExists(admin_user)
+			if err != nil {
+				panic(err)
+			} else if !ok {
+				panic("User does not exists.")
+			}
+		}
 	}
 
 	if conf["page"] == nil {
@@ -84,6 +94,8 @@ func main() {
 
 	webshell.StaticRoute("/assets/", "assets/")
 	webshell.AddRoute("/", topRoute)
+	webshell.AddRoute("/change", changePass)
+	webshell.AddRoute("/add", addUser)
 	webshell.AddRoute("/views/", getViews)
 	webshell.Serve(false, nil)
 }
