@@ -104,10 +104,6 @@ func serveErr(page *Page, err error, w http.ResponseWriter, r *http.Request) {
 }
 
 func topRoute(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/change" {
-		changePass(w, r)
-		return
-	}
 	if r.Method == "POST" {
 		newShortened(w, r)
 		return
@@ -177,8 +173,13 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 			page.Posted = true
 		}
 	} else {
+		fmt.Println("[-] getting new shortid")
 		sid, err := ShortenUrl(ValidateShortenedUrl)
 		if err != nil {
+			serveErr(page, err, w, r)
+			return
+		}
+		if err = insertShortened(sid, url); err != nil {
 			serveErr(page, err, w, r)
 			return
 		} else {
@@ -245,4 +246,40 @@ func changePass(w http.ResponseWriter, r *http.Request) {
 	page.ShowMsg = true
 	page.Msg = "Password changed."
 	servePage(page, w, r)
+}
+
+func addUser(w http.ResponseWriter, r *http.Request) {
+	page := NewPage()
+	page.File = "templates/add.html"
+	if admin_user == "" {
+		err := fmt.Errorf("No administrative user specified.")
+		serveErr(page, err, w, r)
+		return
+	}
+	if r.Method != "POST" {
+		servePage(page, w, r)
+		return
+	}
+	err := r.ParseForm()
+	if err != nil {
+		serveErr(page, err, w, r)
+		return
+	}
+	user := r.Form.Get("user")
+	pass := r.Form.Get("pass")
+	if user != admin_user && !authenticate(user, pass) {
+		err = fmt.Errorf("Authentication failed.")
+		serveErr(page, err, w, r)
+		return
+	}
+	new_user := r.Form.Get("newuser")
+	new_pass := r.Form.Get("newpass")
+	err = addUserToDb(new_user, new_pass)
+	if err != nil {
+		serveErr(page, err, w, r)
+	} else {
+		page.Msg = "User added."
+		page.ShowMsg = true
+		servePage(page, w, r)
+	}
 }
