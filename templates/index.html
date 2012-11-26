@@ -71,7 +71,8 @@
             <p>This is a Go-based URL shortening service; the source code
             is <a href="https://github.com/gokyle/urlshorten_ng">online</a>.
             It is based on the <a href="https://gokyle.github.com/webshell/">
-            webshell</a> framework.</p>
+            webshell</a> framework. You can track the number of views for a
+            shortcode by visiting <code>/views/&lt;short code&gt;</code> .</p>
 {{if .Posted}}
           <p>Your shortened URL is: <a href="{{.Scheme}}://{{.Host}}/{{.ShortCode}}">
           {{.Host}}/{{.ShortCode}}</a>.</p>
