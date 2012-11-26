@@ -130,9 +130,6 @@ func getSidViews(sid string) (count int, err error) {
 
 func dbChangePass(username, password, new_password string) (err error) {
 	if !check_auth || !authenticate(username, password) {
-		if !check_auth {
-			fmt.Println("auth turned off")
-		}
 		err = fmt.Errorf("Authentication failed!")
 		return
 	}
@@ -141,7 +138,6 @@ func dbChangePass(username, password, new_password string) (err error) {
 		return
 	}
 	ph := pbkdf2.HashPassword(new_password)
-	fmt.Printf("hash: %+v\n", ph)
 	res, err := db.Exec("update users set hashed=?,salt=? where username=?",
 		ph.Hash, ph.Salt, username)
 	var n int64

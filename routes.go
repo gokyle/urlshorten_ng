@@ -173,7 +173,6 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 			page.Posted = true
 		}
 	} else {
-		fmt.Println("[-] getting new shortid")
 		sid, err := ShortenUrl(ValidateShortenedUrl)
 		if err != nil {
 			serveErr(page, err, w, r)
@@ -231,7 +230,6 @@ func changePass(w http.ResponseWriter, r *http.Request) {
 	pass := r.Form.Get("pass")
 	new_pass := r.Form.Get("newpass")
 	confirm := r.Form.Get("confirm")
-	fmt.Printf("[-] new='%s', confirm='%s'\n", new_pass, confirm)
 
 	if new_pass != confirm {
 		err = fmt.Errorf("New passwords do not match.")
