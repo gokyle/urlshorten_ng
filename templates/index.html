@@ -76,7 +76,8 @@
 {{if .Posted}}
           <p>Your shortened URL is: <a href="{{.Scheme}}://{{.Host}}/{{.ShortCode}}">
           {{.Host}}/{{.ShortCode}}</a>.</p>
-          <p><a href="/">Shorten another?</a></p>
+          <p>Check the number of views: <a href="{{.Scheme}}://{{.Host}}/views/{{.ShortCode}}">
+          {{.Host}}/views/{{.ShortCode}}</a>.</p>
 {{end}}
 {{if .ShowErr}}
           <h5 style="text-align:center;color:red">{{.Err}}</h5>

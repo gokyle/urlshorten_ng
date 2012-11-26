@@ -199,7 +199,6 @@ func getViews(w http.ResponseWriter, r *http.Request) {
 			views = fmt.Sprintf("%d views", count)
 		}
 	}
-	log.Printf("[-] %s -> %d\n", sid, count)
 	page.ShortCode = sid
 	page.Views = views
 	serveViews(page, w, r)
