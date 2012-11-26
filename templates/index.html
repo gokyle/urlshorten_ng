@@ -73,7 +73,9 @@
             It is based on the <a href="https://gokyle.github.com/webshell/">
             webshell</a> framework. You can track the number of views for a
             shortcode by visiting <code>/views/&lt;short code&gt;</code> .</p>
+{{if .CheckAuth}}
             <p><a href="{{.Scheme}}://{{.Host}}/change">Change your password.</a>
+{{end}}
 {{if .Posted}}
           <p>Your shortened URL is: <a href="{{.Scheme}}://{{.Host}}/{{.ShortCode}}">
           {{.Host}}/{{.ShortCode}}</a>.</p>
