@@ -126,8 +126,6 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
                 serveErr(page, err, w, r)
                 return
         } else if len(sid) > 0 {
-                fmt.Println("sid: ", sid)
-                fmt.Println("url: ", url)
                 if surl, err := lookupShortCode(sid); err != nil {
                         serveErr(page, err, w, r)
                         return

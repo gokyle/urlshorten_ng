@@ -46,6 +46,7 @@ func main() {
 
                 if conf["server"]["development"] == "false" {
                         server_dev = false
+                        server_secure = true
                 }
         }
 
