@@ -36,17 +36,21 @@ func NewPage() (page *Page) {
         }
         count, err := countShortened()
         if err != nil {
-                page.Count = "no pages"
+                page.Count = "are no pages"
         } else {
                 if count == 0 {
-                        page.Count = "no pages"
+                        page.Count = "are no pages"
                 } else {
+                        var verb string
                         if count == 1 {
+                                verb = "is"
                                 page.Count = "page"
                         } else {
+                                verb = "are"
                                 page.Count = "pages"
                         }
-                        page.Count = fmt.Sprintf("%d %s", count, page.Count)
+                        page.Count = fmt.Sprintf("%s %d %s", verb, count,
+                                page.Count)
                 }
         }
 
