@@ -1,6 +1,11 @@
 # urlshorten
 ## a urlshortening web service in Go
 
+`urlshorten` is a simple URL shortening service written in Go. It is based
+on my [`webshell`](https://gokyle.github.com/webshell) framework, and is a
+simple example of writing a web service that includes templating and
+authentication.
+
 ## Setting Up
 
 The `setup/setup` tool should be used to initialise the database. The database
