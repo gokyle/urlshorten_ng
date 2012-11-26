@@ -24,6 +24,29 @@ type Page struct {
         Err string
 }
 
+func getPageCount() (page_count string) {
+        count, err := countShortened()
+        if err != nil {
+                page_count = "are no pages"
+        } else {
+                if count == 0 {
+                        page_count = "are no pages"
+                } else {
+                        var verb string
+                        if count == 1 {
+                                verb = "is"
+                                page_count = "page"
+                        } else {
+                                verb = "are"
+                                page_count = "pages"
+                        }
+                        page_count = fmt.Sprintf("%s %d %s", verb, count,
+                                page_count)
+                }
+        }
+        return
+}
+
 func NewPage() (page *Page) {
         page = new(Page)
         page.Title = page_title
@@ -34,26 +57,6 @@ func NewPage() (page *Page) {
         } else {
                 page.Scheme = "http"
         }
-        count, err := countShortened()
-        if err != nil {
-                page.Count = "are no pages"
-        } else {
-                if count == 0 {
-                        page.Count = "are no pages"
-                } else {
-                        var verb string
-                        if count == 1 {
-                                verb = "is"
-                                page.Count = "page"
-                        } else {
-                                verb = "are"
-                                page.Count = "pages"
-                        }
-                        page.Count = fmt.Sprintf("%s %d %s", verb, count,
-                                page.Count)
-                }
-        }
-
         return
 }
 
@@ -64,6 +67,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func servePage(page *Page, w http.ResponseWriter, r *http.Request) {
+        page.Count = getPageCount()
         out, err := webshell.ServeTemplate("templates/index.html", page)
         if err != nil {
                 webshell.Error404(err.Error(), "text/plain", w, r)
