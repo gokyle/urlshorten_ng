@@ -63,7 +63,7 @@ host = nodality.io
 ```
 
 This will set up a server that listens on `127.0.0.1:8080` in production
-mode; pages will have an title of `"nodality.io"` and links will point to
+mode; pages will have a title of `"nodality.io"` and links will point to
 `https://nodality.io`. The user `flynn` can add new users via the web
 interface.
 
@@ -117,4 +117,5 @@ In this case, nginx handles all the TLS aspects and proxies incoming requests.
 
 Then, navigate to `https://example.net/`. Your passwords may be changed with
 `https://example.net/change`. You can add a new user at
-`https://example.net/add`.
+`https://example.net/add`. 
+
