@@ -7,7 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-const dbFile = "data/urlshorten.db"
+var dbFile = "data/urlshorten.db"
 
 func dbConnect() (db *sql.DB, err error) {
 	db, err = sql.Open("sqlite3", dbFile)

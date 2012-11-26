@@ -48,6 +48,10 @@ func main() {
 			server_dev = false
 			server_secure = true
 		}
+
+		if conf["server"]["dbfile"] != "" {
+			dbFile = conf["server"]["dbfile"]
+		}
 	}
 
 	if conf["page"] == nil {
