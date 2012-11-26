@@ -67,7 +67,7 @@
           <div class="span2"></div>
           <div class="span8">
             <h1 style="text-align:center">{{.Title}}</h1>
-            <h3>Currently, there are {{.Count}} shortened.</h3>
+            <h3>Currently, there {{.if .Count != 1}}are{{else}}is{{end}} {{.Count}} shortened.</h3>
             <p>This is a Go-based URL shortening service; the source code
             is <a href="https://github.com/gokyle/urlshorten_ng">online</a>.
             It is based on the <a href="https://gokyle.github.com/webshell/">
