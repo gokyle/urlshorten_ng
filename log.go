@@ -13,6 +13,9 @@ var ipScrub = regexp.MustCompile("^([^:]):.*$")
 
 func LogRequest(page *Page, r *http.Request) {
 	client_ip := r.Header.Get("x-real-ip")
+	if client_ip == "" {
+		client_ip = ipScrub.ReplaceAllString(r.RemoteAddr, "$1")
+	}
 	timestamp := time.Now().Format(timestamp_fmt)
 	log_line := fmt.Sprintf("%s %s %s %s", client_ip, timestamp,
 		r.Method, r.URL.Path)
