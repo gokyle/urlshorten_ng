@@ -91,6 +91,7 @@ server {
 	access_log /var/log/nginx/example_access.log;
 	error_log /var/log/nginx/example_error.log;
 	location / {
+  		proxy_set_header  X-Real-IP  $remote_addr;
 		proxy_pass http://goweb;
 	}
 
