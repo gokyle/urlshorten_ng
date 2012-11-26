@@ -15,6 +15,9 @@ func dbConnect() (db *sql.DB, err error) {
 }
 
 func lookupShortCode(sid string) (url string, err error) {
+        if sid == "index.html" || sid == "/" {
+                return "", fmt.Errorf("URL already exists")
+        }
 	db, err := dbConnect()
 	if err != nil {
 		return
@@ -88,4 +91,16 @@ func insertShortened(shorturl, url string) (err error) {
 	_, err = db.Exec("insert into shortened values (?, ?)",
 		shorturl, url)
 	return
+}
+
+func countShortened() (count int, err error) {
+        db, err := dbConnect()
+        if err != nil {
+                return
+        }
+
+        query := "select count(*) from shortened"
+        rows := db.QueryRow(query)
+        err = rows.Scan(&count)
+        return
 }

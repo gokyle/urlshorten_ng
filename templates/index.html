@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{.Title}}</title>
+    <meta charset="UTF-8" />
+    <link href="/assets/css/bootstrap.css" rel="stylesheet" type="text/css" />
+    <style type="text/css">
+
+      /* Sticky footer styles
+      -------------------------------------------------- */
+
+      html,
+      body {
+        height: 100%;
+        /* The html and body elements cannot have any padding or margin. */
+      }
+
+      /* Wrapper for page content to push down footer */
+      #wrap {
+        min-height: 100%;
+        height: auto !important;
+        height: 100%;
+        /* Negative indent footer by it's height */
+        margin: 0 auto -60px;
+      }
+
+      /* Set the fixed height of the footer here */
+      #push,
+      #footer {
+        height: 60px;
+      }
+      #footer {
+        background-color: #f5f5f5;
+      }
+
+      /* Lastly, apply responsive CSS fixes as necessary */
+      @media (max-width: 767px) {
+        #footer {
+          margin-left: -20px;
+          margin-right: -20px;
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+      }
+
+
+
+      /* Custom page CSS
+      -------------------------------------------------- */
+      /* Not required for template or sticky footer method. */
+
+      .container {
+        width: auto;
+        max-width: 680px;
+      }
+      .container .credit {
+        margin: 20px 0;
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <div id="wrap">
+      <div class="container">
+        <div class="row">
+          <div class="span2"></div>
+          <div class="span8">
+            <h1 style="text-align:center">{{.Title}}</h1>
+            <h3>Currently, there are {{.Count}} shortened.</h3>
+            <p>This is a Go-based URL shortening service; the source code
+            is <a href="https://github.com/gokyle/urlshorten-ng">online</a>.
+            It is based on the <a href="https://gokyle.github.com/webshell/">
+            webshell</a> framework.</p>
+{{if .Posted}}
+          <p>Your shortened URL is: <a href="{{.Scheme}}://{{.Host}}/{{.ShortCode}}">
+          {{.Host}}/{{.ShortCode}}</a>.</p>
+          <p><a href="/">Shorten another?</a></p>
+{{end}}
+{{if .ShowErr}}
+          <h5 style="text-align:center;color:red">{{.Err}}</h5>
+{{end}}
+
+  <form class="form-horizontal" action="/" method="post">
+    <fieldset>
+      <div id="legend" class="">
+        <legend class="" style="text-align:center">Shorten a URL</legend>
+      </div>
+    
+<div class="control-group">
+
+          <!-- Text input-->
+          <label class="control-label" for="input01">URL</label>
+          <div class="controls">
+            <input name="url" type="text" placeholder="" class="input-xlarge">
+            <p class="help-block">The URL to be shortened.</p>
+          </div>
+        </div>
+
+    <div class="control-group">
+
+          <!-- Text input-->
+          <label class="control-label" for="input01">User</label>
+          <div class="controls">
+            <input name="user" type="text" placeholder="" class="input-xlarge">
+            <p class="help-block">User to authenticate as.</p>
+          </div>
+        </div>
+
+    <div class="control-group">
+
+          <!-- Text input-->
+          <label class="control-label" for="input01">Pass</label>
+          <div class="controls">
+            <input name="pass" type="password" placeholder="" class="input-xlarge">
+            <p class="help-block">Password for user.</p>
+          </div>
+        </div>
+
+    <div class="control-group">
+
+          <!-- Text input-->
+          <label class="control-label" for="input01">Short</label>
+          <div class="controls">
+            <input name="sid" type="text" placeholder="" class="input-xlarge">
+            <p class="help-block">Optional shortcode for the URL.</p>
+          </div>
+        </div>
+
+  <div class="control-group">
+          <label class="control-label"></label>
+
+          <!-- Button -->
+          <div class="controls" style="text-align:center">
+            <button type="submit" class="btn btn-primary">Shorten</button>
+          </div>
+        </div>
+
+    </fieldset>
+  </form>
+<!--
+          <form name="new_url" action="/new.html" method="post">
+          &nbsp;url: <input type="text" name="url"><br>
+          user: <input type="text" name="user"><br>
+          pass: <input type="password" name="pass"><br>
+          short: <input type="text" name="short"><br>
+          <input type="submit" name="action" value="submit">
+          </form>
+ -->
+          </div>
+          <div class="span2"></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <p class="muted credit" style="text-align:center">This page uses the
+      <a href="http://twitter.github.com/bootstrap/">bootstrap</a> stylesheet,
+      which is licensed under the
+      <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License
+      v2.0</a>.</p>
+  </body></html>
+
+<!--
+
+-->

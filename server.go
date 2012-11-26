@@ -8,13 +8,14 @@ import (
         "os"
 )
 
-const default_config = "urlshortenrc"
-
-var (
-        config_file string
+const (
+        default_config = "urlshortenrc"
         DEFAULT_HOST = ""
         DEFAULT_PORT = "8080"
+        DEFAULT_TITLE = "urlshorten.go"
 )
+
+var config_file string
 
 func init() {
         config_server()
@@ -42,9 +43,37 @@ func main() {
                 } else {
                         webshell.SERVER_ADDR = DEFAULT_HOST
                 }
+
+                if conf["server"]["development"] == "false" {
+                        server_dev = false
+                }
+        }
+
+        if conf["page"] == nil {
+                page_title = DEFAULT_TITLE
+                server_host = "localhost"
+        } else {
+                if conf["page"]["title"] != "" {
+                        page_title = conf["page"]["title"]
+                } else {
+                        page_title = DEFAULT_TITLE
+                }
+
+                if conf["page"]["host"] != "" {
+                        server_host = conf["page"]["title"]
+                } else {
+                        server_host = "localhost"
+                }
+        }
+
+        if server_dev {
+                server_host = fmt.Sprintf("%s:%s", server_host, webshell.SERVER_PORT)
         }
 
 
+
+        webshell.StaticRoute("/assets/", "assets/")
+        webshell.AddRoute("/", topRoute)
         webshell.Serve(false, nil)
 }
 
