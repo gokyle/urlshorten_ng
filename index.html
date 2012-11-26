@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>urlshorten-ng by gokyle</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>urlshorten-ng</h1>
+        <p>Simple URL shortener web service.</p>
+
+        <p class="view"><a href="https://github.com/gokyle/urlshorten_ng">View the Project on GitHub <small>gokyle/urlshorten_ng</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/gokyle/urlshorten_ng/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/gokyle/urlshorten_ng/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/gokyle/urlshorten_ng">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><code>urlshorten</code> is a simple URL shortening service written in Go. It is based
+on my <a href="https://gokyle.github.com/webshell"><code>webshell</code></a> framework, and is a
+simple example of writing a web service that includes templating and
+authentication.</p>
+
+<h2>Setting Up</h2>
+
+<p>The <code>setup/setup</code> tool should be used to initialise the database. The database
+file defaults to <code>data/urlshorten.db</code>. This may be changed in the configuration
+file, but the file has to be specified on the command line for the setup tool.</p>
+
+<p>The database should be initialised with <code>setup -d /path/to/db/file -c</code> to create
+the database. The <code>-a</code> flag adds a user to the database, and <code>-r</code> removes the
+user. The <code>setup</code> program will prompt for the user name, and, where applicable,
+the password. Note that while the program will create the database file as
+needed, it will not create intermediary directories.</p>
+
+<h2>The Configuration File</h2>
+
+<p>Configuration is done with the <a href="https://gokyle.github.com/goconfig"><code>goconfig</code></a>
+package. The configuration file consists of two sections: <code>server</code> and <code>page</code>.</p>
+
+<h3><code>server</code></h3>
+
+<p>This section configures the server. It supports the following options:</p>
+
+<ul>
+<li>
+<code>port</code>: set the port the server should listen on. Defaults to <code>8080</code>.</li>
+<li>
+<code>host</code>: set the host the host the server should listen on. This is
+separate from the <code>page</code> option with this name. Defaults to an empty string
+to listen on all interfaces.</li>
+<li>
+<code>authenticate</code>: if set to "false", turns off checks for authentication. This
+is on by default.</li>
+<li>
+<code>admin_user</code>: set the administrative user; this is used to add new users to
+the site. The default is not set; no users can be added via the site.</li>
+<li>
+<code>development</code>: set this to <code>false</code> to disable development features; in
+development mode, links are set up as <code>host:port</code>. Links in development
+mode also use the <code>http</code> scheme. If development mode is turned off, links
+use <code>https</code> and the port is not included in links. Defaults to <code>true</code>.</li>
+<li>
+<code>dbfile</code>: specify the path to the database file. Defaults to
+<code>data/urlshorten.db</code>.</li>
+</ul><h3><code>page</code></h3>
+
+<p>This section controls page templates. Valid options are:</p>
+
+<ul>
+<li>
+<code>title</code>: sets the page title. Defaults to <code>urlshorten.go</code>.</li>
+<li>
+<code>host</code>: the host name to use in links. Defaults to <code>localhost</code>. This
+affects displayed links to shortcodes only.</li>
+</ul><h3>Example production configuration file:</h3>
+
+<pre><code>[server]
+port = 8100
+host = 127.0.0.1
+development = false
+admin_user = flynn
+
+[page]
+title = nodality.io
+host = nodality.io
+</code></pre>
+
+<p>This will set up a server that listens on <code>127.0.0.1:8080</code> in production
+mode; pages will have an title of <code>"nodality.io"</code> and links will point to
+<code>https://nodality.io</code>. The user <code>flynn</code> can add new users via the web
+interface.</p>
+
+<h2>Running The Service</h2>
+
+<p>It is recommended to run the service behind a proxy; in nginx, you could do
+this with</p>
+
+<pre><code>upstream goweb {
+        server 127.0.0.1:8080;
+} 
+
+server {
+    listen 80;
+    server_name example.net;
+    rewrite ^(.*) https://$host$1 permanent;
+}
+
+server {
+    listen 443 ;
+    server_name example.net
+
+    access_log /var/log/nginx/example_access.log;
+    error_log /var/log/nginx/example_error.log;
+    location / {
+        proxy_pass http://goweb;
+    }
+
+        ssl on;
+    ssl_certificate /etc/ssl/certs/example.pem;
+    ssl_certificate_key /etc/ssl/private/example.key;
+
+    ssl_session_timeout 5m;
+
+    ssl_protocols TLSv1;
+    ssl_ciphers ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:!MEDIUM:!LOW:+SSLv3:+EXP;
+    ssl_prefer_server_ciphers on;
+
+}
+</code></pre>
+
+<p>In this case, nginx handles all the TLS aspects and proxies incoming requests.</p>
+
+<p>Then, navigate to <code>https://example.net/</code>. Your passwords may be changed with
+<code>https://example.net/change</code>. You can add a new user at
+<code>https://example.net/add</code>.</p>
+
+<p>This code is based on an example I wrote without using <code>webshell</code>.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/gokyle">gokyle</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
