@@ -49,11 +49,11 @@ func ShortenUrl(validator ShortIdValidator) (shortid string, err error) {
 }
 
 func ValidateShortenedUrl(shortid string) (ok bool, err error) {
-        url, err := lookupShortCode(shortid)
-        if err != nil {
-                return
-        } else if len(url) != 0 {
-                ok = true
-        }
-        return
+	url, err := lookupShortCode(shortid)
+	if err != nil {
+		return
+	} else if len(url) != 0 {
+		ok = true
+	}
+	return
 }

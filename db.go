@@ -15,9 +15,9 @@ func dbConnect() (db *sql.DB, err error) {
 }
 
 func lookupShortCode(sid string) (url string, err error) {
-        if sid == "index.html" || sid == "/" {
-                return "", fmt.Errorf("URL already exists")
-        }
+	if sid == "index.html" || sid == "/" {
+		return "", fmt.Errorf("URL already exists")
+	}
 	db, err := dbConnect()
 	if err != nil {
 		return
@@ -82,25 +82,52 @@ func getPassHash(username string) (ph pbkdf2.PasswordHash, err error) {
 	return
 }
 
-func insertShortened(shorturl, url string) (err error) {
+func insertShortened(sid, url string) (err error) {
 	db, err := dbConnect()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 	_, err = db.Exec("insert into shortened values (?, ?)",
-		shorturl, url)
+		sid, url)
+	if err != nil {
+		return
+	}
+	_, err = db.Exec("insert into views values (?, 0)", sid)
 	return
 }
 
 func countShortened() (count int, err error) {
-        db, err := dbConnect()
-        if err != nil {
-                return
-        }
+	db, err := dbConnect()
+	if err != nil {
+		return
+	}
 
-        query := "select count(*) from shortened"
-        rows := db.QueryRow(query)
-        err = rows.Scan(&count)
-        return
+	query := "select count(*) from shortened"
+	rows := db.QueryRow(query)
+	err = rows.Scan(&count)
+	return
+}
+
+func updateSidViews(sid string) (err error) {
+	db, err := dbConnect()
+	if err != nil {
+		return
+	}
+	_, err = db.Exec("update views set views = views + 1 where sid=?",
+		sid)
+	fmt.Printf("[-] sid views updated: ")
+	count, err := getSidViews(sid)
+	fmt.Println(count)
+	return
+}
+
+func getSidViews(sid string) (count int, err error) {
+	db, err := dbConnect()
+	if err != nil {
+		return
+	}
+	rows := db.QueryRow("select views from views where sid=?", sid)
+	err = rows.Scan(&count)
+	return
 }
