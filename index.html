@@ -103,6 +103,13 @@ mode; pages will have an title of <code>"nodality.io"</code> and links will poin
 <code>https://nodality.io</code>. The user <code>flynn</code> can add new users via the web
 interface.</p>
 
+<h2>Authentication</h2>
+
+<p>If you have enabled authentication, a username and password will be required
+to shorten any urls. Enabling authentication also enables the /add and /change
+routes. However, you will need to set up an initial user using the command
+line tool as noted above.</p>
+
 <h2>Running The Service</h2>
 
 <p>It is recommended to run the service behind a proxy; in nginx, you could do
@@ -125,6 +132,7 @@ server {
     access_log /var/log/nginx/example_access.log;
     error_log /var/log/nginx/example_error.log;
     location / {
+        proxy_set_header  X-Real-IP  $remote_addr;
         proxy_pass http://goweb;
     }
 
@@ -146,8 +154,6 @@ server {
 <p>Then, navigate to <code>https://example.net/</code>. Your passwords may be changed with
 <code>https://example.net/change</code>. You can add a new user at
 <code>https://example.net/add</code>.</p>
-
-<p>This code is based on an example I wrote without using <code>webshell</code>.</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/gokyle">gokyle</a></p>
