@@ -15,7 +15,10 @@ const (
 	DEFAULT_TITLE  = "urlshorten.go"
 )
 
-var config_file string
+var (
+	config_file string
+	check_auth  = true
+)
 
 func init() {
 	config_server()
@@ -51,6 +54,10 @@ func main() {
 
 		if conf["server"]["dbfile"] != "" {
 			dbFile = conf["server"]["dbfile"]
+		}
+
+		if conf["server"]["authenticate"] == "false" {
+			check_auth = false
 		}
 	}
 

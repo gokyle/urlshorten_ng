@@ -23,9 +23,12 @@ type Page struct {
 	ShortCode string
 	Posted    bool
 	ShowErr   bool
+	ShowMsg   bool
 	Scheme    string
-	Err       string
+	Msg       string
 	Views     string
+	CheckAuth bool
+	File      string
 }
 
 func getPageCount() (page_count string) {
@@ -55,6 +58,8 @@ func NewPage() (page *Page) {
 	page = new(Page)
 	page.Title = page_title
 	page.Host = server_host
+	page.CheckAuth = check_auth
+	page.File = "templates/index.html"
 
 	if server_secure {
 		page.Scheme = "https"
@@ -72,7 +77,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 func servePage(page *Page, w http.ResponseWriter, r *http.Request) {
 	page.Count = getPageCount()
-	out, err := webshell.ServeTemplate("templates/index.html", page)
+	out, err := webshell.ServeTemplate(page.File, page)
 	if err != nil {
 		webshell.Error404(err.Error(), "text/plain", w, r)
 	} else {
@@ -94,11 +99,15 @@ func serveViews(page *Page, w http.ResponseWriter, r *http.Request) {
 
 func serveErr(page *Page, err error, w http.ResponseWriter, r *http.Request) {
 	page.ShowErr = true
-	page.Err = err.Error()
+	page.Msg = err.Error()
 	servePage(page, w, r)
 }
 
 func topRoute(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/change" {
+		changePass(w, r)
+		return
+	}
 	if r.Method == "POST" {
 		newShortened(w, r)
 		return
@@ -184,6 +193,7 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 func getViews(w http.ResponseWriter, r *http.Request) {
 	sid := strip_views.ReplaceAllString(r.URL.Path, "$1")
 	page := NewPage()
+	page.File = "templates/views.html"
 	count, err := getSidViews(sid)
 
 	var views string
@@ -201,5 +211,38 @@ func getViews(w http.ResponseWriter, r *http.Request) {
 	}
 	page.ShortCode = sid
 	page.Views = views
-	serveViews(page, w, r)
+	servePage(page, w, r)
+}
+
+func changePass(w http.ResponseWriter, r *http.Request) {
+	page := NewPage()
+	page.File = "templates/change.html"
+	if r.Method != "POST" {
+		servePage(page, w, r)
+		return
+	}
+	err := r.ParseForm()
+	if err != nil {
+		serveErr(page, err, w, r)
+		return
+	}
+	user := r.Form.Get("user")
+	pass := r.Form.Get("pass")
+	new_pass := r.Form.Get("newpass")
+	confirm := r.Form.Get("confirm")
+	fmt.Printf("[-] new='%s', confirm='%s'\n", new_pass, confirm)
+
+	if new_pass != confirm {
+		err = fmt.Errorf("New passwords do not match.")
+		serveErr(page, err, w, r)
+		return
+	}
+	err = dbChangePass(user, pass, new_pass)
+	if err != nil {
+		serveErr(page, err, w, r)
+		return
+	}
+	page.ShowMsg = true
+	page.Msg = "Password changed."
+	servePage(page, w, r)
 }
