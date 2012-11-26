@@ -117,7 +117,6 @@ func topRoute(w http.ResponseWriter, r *http.Request) {
 			log.Printf("[+] error updating views: %s\n",
 				err.Error())
 		}
-		fmt.Println("redirecting to ", url)
 		http.Redirect(w, r, url, 301)
 		return
 	}

@@ -71,7 +71,6 @@ func getPassHash(username string) (ph pbkdf2.PasswordHash, err error) {
 	for rows.Next() {
 		err = rows.Scan(&user, &hashed, &salt)
 		if err != nil {
-			fmt.Println(err)
 			return
 		}
 	}
@@ -116,9 +115,6 @@ func updateSidViews(sid string) (err error) {
 	}
 	_, err = db.Exec("update views set views = views + 1 where sid=?",
 		sid)
-	fmt.Printf("[-] sid views updated: ")
-	count, err := getSidViews(sid)
-	fmt.Println(count)
 	return
 }
 
