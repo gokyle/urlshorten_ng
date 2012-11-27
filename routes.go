@@ -184,7 +184,7 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 		} else if err = insertShortened(sid, url); err != nil {
 			serveErr(page, err, w, r)
 			return
-		} else if valid_sid(sid) {
+		} else if valid_sid.MatchString(sid) {
 			page.ShortCode = sid
 			page.Posted = true
 		} else {
