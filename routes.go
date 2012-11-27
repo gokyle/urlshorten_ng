@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+        "strings"
 )
 
 var (
@@ -15,6 +16,7 @@ var (
 	server_dev    = true
 	strip_views   = regexp.MustCompile("^/views/(.+)$")
 	valid_link    = regexp.MustCompile("^\\w+://")
+        valid_sid     = regexp.MustCompile("^[\\w-_]+$")
 )
 
 type Page struct {
@@ -35,7 +37,6 @@ type Page struct {
 
 func (page *Page) getAllViews() {
         count, err := getAllViews()
-        verb := "have been"
         if err != nil {
                 page.AllViews = "no views"
         } else {
@@ -43,33 +44,29 @@ func (page *Page) getAllViews() {
                 case 0:
                         page.AllViews = "no views"
                 case 1:
-                        verb = "has been"
                         page.AllViews = "one view"
                 default:
                         page.AllViews = fmt.Sprintf("%d views", count)
                 }
         }
-        page.AllViews = fmt.Sprintf("%s %s", verb, page.AllViews)
 }
 
-func getPageCount() (page_count string) {
+func (page *Page) getPageCount() {
 	count, err := countShortened()
 	if err != nil {
-		page_count = "are no pages"
+		page.Count = "No links"
 	} else {
 		if count == 0 {
-			page_count = "are no pages"
+			page.Count = "No links"
 		} else {
 			var verb string
 			if count == 1 {
-				verb = "is"
-				page_count = "page"
+				page.Count = "link"
 			} else {
-				verb = "are"
-				page_count = "pages"
+				page.Count = "links"
 			}
-			page_count = fmt.Sprintf("%s %d %s", verb, count,
-				page_count)
+			page.Count = fmt.Sprintf("%s %d %s", verb, count,
+				page.Count)
 		}
 	}
 	return
@@ -97,20 +94,9 @@ func home(w http.ResponseWriter, r *http.Request) {
 }
 
 func servePage(page *Page, w http.ResponseWriter, r *http.Request) {
-	page.Count = getPageCount()
+	page.getPageCount()
         page.getAllViews()
 	out, err := webshell.ServeTemplate(page.File, page)
-	if err != nil {
-		webshell.Error404(err.Error(), "text/plain", w, r)
-	} else {
-		w.Write(out)
-	}
-	LogRequest(page, r)
-}
-
-func serveViews(page *Page, w http.ResponseWriter, r *http.Request) {
-	page.Count = getPageCount()
-	out, err := webshell.ServeTemplate("templates/views.html", page)
 	if err != nil {
 		webshell.Error404(err.Error(), "text/plain", w, r)
 	} else {
@@ -198,10 +184,14 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 		} else if err = insertShortened(sid, url); err != nil {
 			serveErr(page, err, w, r)
 			return
-		} else {
+		} else if valid_sid(sid) {
 			page.ShortCode = sid
 			page.Posted = true
-		}
+		} else {
+                        err = fmt.Errorf("Invalid short code.")
+                        serveErr(page, err, w, r)
+                        return
+                }
 	} else {
 		sid, err := ShortenUrl(ValidateShortenedUrl)
 		if err != nil {
@@ -222,8 +212,15 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 
 func getViews(w http.ResponseWriter, r *http.Request) {
 	sid := strip_views.ReplaceAllString(r.URL.Path, "$1")
+        sid = strings.TrimRight(sid, "/")
 	page := NewPage()
 	page.File = "templates/views.html"
+        if !valid_sid.MatchString(sid) {
+                page.File = "templates/index.html"
+                err := fmt.Errorf("Invalid short code.")
+                serveErr(page, err, w, r)
+                return
+        }
 	count, err := getSidViews(sid)
 
 	var views string
