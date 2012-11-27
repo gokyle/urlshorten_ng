@@ -70,13 +70,13 @@ func main() {
 			}
 		}
 
-                if conf["server"]["access_log"] != "" {
-                        access_logfile = conf["server"]["access_log"]
-                }
-	        error_logfile = access_logfile
-                if conf["server"]["error_log"] != "" {
-                        error_logfile = conf["server"]["error_log"]
-                }
+		if conf["server"]["access_log"] != "" {
+			access_logfile = conf["server"]["access_log"]
+		}
+		error_logfile = access_logfile
+		if conf["server"]["error_log"] != "" {
+			error_logfile = conf["server"]["error_log"]
+		}
 	}
 
 	if conf["page"] == nil {
