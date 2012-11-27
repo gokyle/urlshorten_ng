@@ -19,6 +19,8 @@ var (
 	valid_sid     = regexp.MustCompile("^[\\w-_]+$")
 )
 
+var NotFound webshell.TemplateErrorRoute
+
 type Page struct {
 	Title     string
 	Count     string
@@ -135,8 +137,14 @@ func topRoute(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 		return
 	}
-
-	home(w, r)
+	if sid != "/" && sid != "/index.html" {
+		page := NewPage()
+		page.getPageCount()
+		page.getAllViews()
+		NotFound(page, w, r)
+	} else {
+		home(w, r)
+	}
 }
 
 func newShortened(w http.ResponseWriter, r *http.Request) {
@@ -217,9 +225,7 @@ func getViews(w http.ResponseWriter, r *http.Request) {
 	page := NewPage()
 	page.File = "templates/views.html"
 	if !valid_sid.MatchString(sid) {
-		page.File = "templates/index.html"
-		err := fmt.Errorf("Invalid short code.")
-		serveErr(page, err, w, r)
+		NotFound(page, w, r)
 		return
 	}
 	count, err := getSidViews(sid)

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	config "github.com/gokyle/goconfig"
 	"github.com/gokyle/webshell"
+	"net/http"
 	"os"
 )
 
@@ -101,6 +102,11 @@ func main() {
 		server_host = fmt.Sprintf("%s:%s", server_host, webshell.SERVER_PORT)
 	}
 
+	NotFound, err = webshell.GenerateTemplateErrorHandler(http.StatusNotFound,
+		"templates/404.html")
+	if err != nil {
+		panic(err.Error())
+	}
 	webshell.StaticRoute("/assets/", "assets/")
 	webshell.AddRoute("/", topRoute)
 	if check_auth {
