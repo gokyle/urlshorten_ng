@@ -45,6 +45,10 @@ user. The <code>setup</code> program will prompt for the user name, and, where a
 the password. Note that while the program will create the database file as
 needed, it will not create intermediary directories.</p>
 
+<p>Finally, you should create any directories needed to store log files in, and
+ensure the service has permission to write them. By default, the service looks
+for the directory "logs" in the same directory it was run in.</p>
+
 <h2>The Configuration File</h2>
 
 <p>Configuration is done with the <a href="https://gokyle.github.com/goconfig"><code>goconfig</code></a>
@@ -75,6 +79,13 @@ use <code>https</code> and the port is not included in links. Defaults to <code>
 <li>
 <code>dbfile</code>: specify the path to the database file. Defaults to
 <code>data/urlshorten.db</code>.</li>
+<li>
+<code>access_log</code>: specify the path to the access log that should be written; if
+no file is specified it will default to <code>logs/access</code>. The logs are
+written to <code>access-&lt;date&gt;.log</code>.</li>
+<li>
+<code>error_log</code>: specifiy the path to the error log that should be written;
+to the access log.</li>
 </ul><h3><code>page</code></h3>
 
 <p>This section controls page templates. Valid options are:</p>
@@ -99,7 +110,7 @@ host = nodality.io
 </code></pre>
 
 <p>This will set up a server that listens on <code>127.0.0.1:8080</code> in production
-mode; pages will have an title of <code>"nodality.io"</code> and links will point to
+mode; pages will have a title of <code>"nodality.io"</code> and links will point to
 <code>https://nodality.io</code>. The user <code>flynn</code> can add new users via the web
 interface.</p>
 
@@ -153,7 +164,7 @@ server {
 
 <p>Then, navigate to <code>https://example.net/</code>. Your passwords may be changed with
 <code>https://example.net/change</code>. You can add a new user at
-<code>https://example.net/add</code>.</p>
+<code>https://example.net/add</code>. </p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/gokyle">gokyle</a></p>
