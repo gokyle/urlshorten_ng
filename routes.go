@@ -14,6 +14,7 @@ var (
 	server_secure bool
 	server_dev    = true
 	strip_views   = regexp.MustCompile("^/views/(.+)$")
+	valid_link    = regexp.MustCompile("^\\w+://")
 )
 
 type Page struct {
@@ -147,6 +148,9 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 	}
 	sid := r.Form.Get("sid")
 	url := r.Form.Get("url")
+	if len(url) > 0 && !valid_link.MatchString(url) {
+		url = "http://" + url
+	}
 	if len(url) == 0 {
 		err := fmt.Errorf("Invalid URL")
 		serveErr(page, err, w, r)
