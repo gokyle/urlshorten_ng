@@ -74,6 +74,7 @@ func main() {
 			access_logfile = conf["server"]["access_log"]
 		}
 		error_logfile = access_logfile
+
 		if conf["server"]["error_log"] != "" {
 			error_logfile = conf["server"]["error_log"]
 		}
