@@ -18,7 +18,6 @@ user. The `setup` program will prompt for the user name, and, where applicable,
 the password. Note that while the program will create the database file as
 needed, it will not create intermediary directories.
 
-
 ## The Configuration File
 
 Configuration is done with the [`goconfig`](https://gokyle.github.com/goconfig)
@@ -64,9 +63,15 @@ host = nodality.io
 ```
 
 This will set up a server that listens on `127.0.0.1:8080` in production
-mode; pages will have an title of `"nodality.io"` and links will point to
+mode; pages will have a title of `"nodality.io"` and links will point to
 `https://nodality.io`. The user `flynn` can add new users via the web
 interface.
+
+## Authentication
+If you have enabled authentication, a username and password will be required
+to shorten any urls. Enabling authentication also enables the /add and /change
+routes. However, you will need to set up an initial user using the command
+line tool as noted above.
 
 ## Running The Service
 
@@ -91,6 +96,7 @@ server {
 	access_log /var/log/nginx/example_access.log;
 	error_log /var/log/nginx/example_error.log;
 	location / {
+  		proxy_set_header  X-Real-IP  $remote_addr;
 		proxy_pass http://goweb;
 	}
 
@@ -111,4 +117,5 @@ In this case, nginx handles all the TLS aspects and proxies incoming requests.
 
 Then, navigate to `https://example.net/`. Your passwords may be changed with
 `https://example.net/change`. You can add a new user at
-`https://example.net/add`.
+`https://example.net/add`. 
+

@@ -94,8 +94,10 @@ func main() {
 
 	webshell.StaticRoute("/assets/", "assets/")
 	webshell.AddRoute("/", topRoute)
-	webshell.AddRoute("/change", changePass)
-	webshell.AddRoute("/add", addUser)
+	if check_auth {
+		webshell.AddRoute("/change", changePass)
+		webshell.AddRoute("/add", addUser)
+	}
 	webshell.AddRoute("/views/", getViews)
 	webshell.Serve(false, nil)
 }
