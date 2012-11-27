@@ -19,6 +19,8 @@ var (
 type Page struct {
 	Title     string
 	Count     string
+        Views     string
+        AllViews  string
 	Host      string
 	ShortCode string
 	Posted    bool
@@ -26,9 +28,27 @@ type Page struct {
 	ShowMsg   bool
 	Scheme    string
 	Msg       string
-	Views     string
 	CheckAuth bool
 	File      string
+}
+
+func (page *Page) getAllViews() {
+        count, err := getAllViews()
+        verb := "have been"
+        if err != nil {
+                page.AllViews = "no views"
+        } else {
+                switch (count) {
+                case 0:
+                        page.AllViews = "no views"
+                case 1:
+                        verb = "has been"
+                        page.AllViews = "one view"
+                default:
+                        page.AllViews = fmt.Sprintf("%d views", count)
+                }
+        }
+        page.AllViews = fmt.Sprintf("%s %s", verb, page.AllViews)
 }
 
 func getPageCount() (page_count string) {
@@ -77,6 +97,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 
 func servePage(page *Page, w http.ResponseWriter, r *http.Request) {
 	page.Count = getPageCount()
+        page.getAllViews()
 	out, err := webshell.ServeTemplate(page.File, page)
 	if err != nil {
 		webshell.Error404(err.Error(), "text/plain", w, r)
@@ -123,7 +144,7 @@ func topRoute(w http.ResponseWriter, r *http.Request) {
 				err.Error())
 		}
                 LogRequest(nil, r)
-		http.Redirect(w, r, url, 301)
+		http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 		return
 	}
 

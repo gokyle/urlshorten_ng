@@ -128,6 +128,16 @@ func getSidViews(sid string) (count int, err error) {
 	return
 }
 
+func getAllViews() (count int, err error) {
+        db, err := dbConnect()
+        if err != nil {
+                return
+        }
+        rows := db.QueryRow("select sum(views) from views")
+        err = rows.Scan(&count)
+        return
+}
+
 func dbChangePass(username, password, new_password string) (err error) {
 	if !check_auth || !authenticate(username, password) {
 		err = fmt.Errorf("Authentication failed!")
