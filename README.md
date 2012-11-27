@@ -18,6 +18,10 @@ user. The `setup` program will prompt for the user name, and, where applicable,
 the password. Note that while the program will create the database file as
 needed, it will not create intermediary directories.
 
+Finally, you should create any directories needed to store log files in, and
+ensure the service has permission to write them. By default, the service looks
+for the directory "logs" in the same directory it was run in.
+
 ## The Configuration File
 
 Configuration is done with the [`goconfig`](https://gokyle.github.com/goconfig)
@@ -40,6 +44,11 @@ mode also use the `http` scheme. If development mode is turned off, links
 use `https` and the port is not included in links. Defaults to `true`.
 * `dbfile`: specify the path to the database file. Defaults to
 `data/urlshorten.db`.
+* `access_log`: specify the path to the access log that should be written; if
+no file is specified it will default to `logs/access`. The logs are
+written to `access-<date>.log`.
+* `error_log`: specifiy the path to the error log that should be written;
+to the access log.
 
 ### `page`
 This section controls page templates. Valid options are:

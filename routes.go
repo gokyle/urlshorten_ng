@@ -108,6 +108,7 @@ func servePage(page *Page, w http.ResponseWriter, r *http.Request) {
 func serveErr(page *Page, err error, w http.ResponseWriter, r *http.Request) {
 	page.ShowErr = true
 	page.Msg = err.Error()
+        LogError(page, r)
 	servePage(page, w, r)
 }
 

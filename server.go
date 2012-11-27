@@ -88,6 +88,7 @@ func main() {
 		}
 	}
 
+        error_logfile = access_logfile
 	if server_dev {
 		server_host = fmt.Sprintf("%s:%s", server_host, webshell.SERVER_PORT)
 	}
