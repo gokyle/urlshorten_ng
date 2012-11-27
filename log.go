@@ -73,7 +73,6 @@ func nonExist(logfile string) string {
 
 func writeLogEntry(logfile, line string) (err error) {
 	logfile = logfileName(logfile)
-	fmt.Println("[-] logfile: ", logfile)
 	file, err := os.OpenFile(logfile, os.O_WRONLY|os.O_APPEND, 0600)
 	if err != nil && err.Error() == nonExist(logfile) {
 		file, err = os.Create(logfile)
