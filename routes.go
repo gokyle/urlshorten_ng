@@ -141,6 +141,9 @@ func topRoute(w http.ResponseWriter, r *http.Request) {
 		page := NewPage()
 		page.getPageCount()
 		page.getAllViews()
+		page.Msg = "404 - page not found"
+		page.ShowErr = true
+		LogError(page, r)
 		NotFound(page, w, r)
 	} else {
 		home(w, r)
