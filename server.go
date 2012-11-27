@@ -69,6 +69,14 @@ func main() {
 				panic("User does not exists.")
 			}
 		}
+
+                if conf["server"]["access_log"] != "" {
+                        access_logfile = conf["server"]["access_log"]
+                }
+	        error_logfile = access_logfile
+                if conf["server"]["error_log"] != "" {
+                        error_logfile = conf["server"]["error_log"]
+                }
 	}
 
 	if conf["page"] == nil {
@@ -88,7 +96,6 @@ func main() {
 		}
 	}
 
-	error_logfile = access_logfile
 	if server_dev {
 		server_host = fmt.Sprintf("%s:%s", server_host, webshell.SERVER_PORT)
 	}
