@@ -5,6 +5,7 @@ import (
 	"fmt"
 	config "github.com/gokyle/goconfig"
 	"github.com/gokyle/webshell"
+	"log"
 	"net/http"
 	"os"
 )
@@ -109,12 +110,12 @@ func main() {
 		panic(err.Error())
 	}
 	app := webshell.NewApp("urlshorten-ng", host, port)
-	app.StaticRoute("/assets/", "assets/")
+	app.StaticRoute("/assets/", "/tmp/assets/")
 	app.AddRoute("/", topRoute)
 	app.AddConditionalRoute(check_auth, "/add", addUser)
 	app.AddConditionalRoute(check_auth, "/change", changePass)
 	app.AddRoute("/views/", getViews)
-	app.Serve()
+	log.Fatal(app.Serve())
 }
 
 func config_server() {
