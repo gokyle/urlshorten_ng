@@ -5,6 +5,7 @@ import (
 	"fmt"
 	config "github.com/gokyle/goconfig"
 	"github.com/gokyle/webshell"
+	"github.com/gokyle/webshell/assetcache"
 	"log"
 	"net/http"
 	"os"
@@ -61,6 +62,8 @@ func main() {
 
 		if conf["server"]["authenticate"] == "false" {
 			check_auth = false
+		} else {
+			init_auth()
 		}
 
 		if conf["server"]["admin_user"] != "" {
@@ -110,11 +113,15 @@ func main() {
 		panic(err.Error())
 	}
 	app := webshell.NewApp("urlshorten-ng", host, port)
-	app.StaticRoute("/assets/", "/tmp/assets/")
-	app.AddRoute("/", topRoute)
+	err = assetcache.BackgroundAttachAssetCache(app, "/assets/", "assets/")
+	if err != nil {
+		log.Fatal("[!] ", err.Error())
+	}
 	app.AddConditionalRoute(check_auth, "/add", addUser)
 	app.AddConditionalRoute(check_auth, "/change", changePass)
 	app.AddRoute("/views/", getViews)
+	app.AddRoute("/", topRoute)
+	log.Printf("[+] listening on %s:%s\n", host, port)
 	log.Fatal(app.Serve())
 }
 

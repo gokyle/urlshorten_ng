@@ -4,6 +4,7 @@ import (
 	"bitbucket.org/taruti/pbkdf2"
 	"database/sql"
 	"fmt"
+	"github.com/gokyle/webshell/auth"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -55,7 +56,7 @@ func urlToSid(url string) (sid string, err error) {
 	return
 }
 
-func getPassHash(username string) (ph pbkdf2.PasswordHash, err error) {
+func getPassHash(username interface{}) (salt, hash []byte) {
 	db, err := dbConnect()
 	if err != nil {
 		return
@@ -67,17 +68,21 @@ func getPassHash(username string) (ph pbkdf2.PasswordHash, err error) {
 		return
 	}
 
-	var user, hashed, salt string
+	var user string
 	for rows.Next() {
-		err = rows.Scan(&user, &hashed, &salt)
+		err = rows.Scan(&user, &hash, &salt)
 		if err != nil {
+			hash = []byte("")
+			salt = []byte("")
 			return
 		}
 	}
 	if err = rows.Err(); err != nil {
+		hash = []byte("")
+		salt = []byte("")
 		return
 	}
-	ph = pbkdf2.PasswordHash{[]byte(salt), []byte(hashed)}
+	fmt.Printf("hash: %+v, salt: %+v\n", hash, salt)
 	return
 }
 
@@ -139,7 +144,7 @@ func getAllViews() (count int, err error) {
 }
 
 func dbChangePass(username, password, new_password string) (err error) {
-	if !check_auth || !authenticate(username, password) {
+	if !check_auth || !auth.Authenticate(username, password) {
 		err = fmt.Errorf("Authentication failed!")
 		return
 	}

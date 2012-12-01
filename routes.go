@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gokyle/webshell"
+	"github.com/gokyle/webshell/auth"
 	"log"
 	"net/http"
 	"regexp"
@@ -10,6 +11,7 @@ import (
 )
 
 var (
+	admin_user    string
 	page_title    string
 	server_host   string
 	server_secure bool
@@ -160,7 +162,7 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Form.Get("user")
 	pass := r.Form.Get("pass")
-	if !authenticate(user, pass) {
+	if !auth.Authenticate(user, pass) {
 		err = fmt.Errorf("Authenticated failed!")
 		serveErr(page, err, w, r)
 		return
@@ -302,7 +304,7 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 	}
 	user := r.Form.Get("user")
 	pass := r.Form.Get("pass")
-	if user != admin_user && !authenticate(user, pass) {
+	if user != admin_user && !auth.Authenticate(user, pass) {
 		err = fmt.Errorf("Authentication failed.")
 		serveErr(page, err, w, r)
 		return
@@ -317,4 +319,8 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 		page.ShowMsg = true
 		servePage(page, w, r)
 	}
+}
+
+func init_auth() {
+	auth.LookupCredentials = getPassHash
 }
