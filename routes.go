@@ -275,7 +275,21 @@ func changePass(w http.ResponseWriter, r *http.Request) {
 		serveErr(page, err, w, r)
 		return
 	}
-	err = dbChangePass(user, pass, new_pass)
+	if !check_auth || !auth.Authenticate(user, pass) {
+		page.Msg = "Authentication failed."
+                page.ShowErr = true
+                servePage(page, w, r)
+		return
+	}
+
+        salt, hash := auth.HashPass(new_pass)
+        if len(salt) == 0 || len(hash) == 0 {
+                page.Msg = "Invalid password."
+                page.ShowErr = true
+                servePage(page, w, r)
+                return
+        }
+	err = dbChangePass(user, salt, hash)
 	if err != nil {
 		serveErr(page, err, w, r)
 		return
@@ -311,7 +325,14 @@ func addUser(w http.ResponseWriter, r *http.Request) {
 	}
 	new_user := r.Form.Get("newuser")
 	new_pass := r.Form.Get("newpass")
-	err = addUserToDb(new_user, new_pass)
+        salt, hash := auth.HashPass(new_pass)
+        if len(salt) == 0 || len(hash) == 0 {
+                page.Msg = "Invalid password."
+                page.ShowErr = true
+                servePage(page, w, r)
+                return
+        }
+	err = addUserToDb(new_user, salt, hash)
 	if err != nil {
 		serveErr(page, err, w, r)
 	} else {

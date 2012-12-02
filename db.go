@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bitbucket.org/taruti/pbkdf2"
 	"database/sql"
 	"fmt"
-	"github.com/gokyle/webshell/auth"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -82,7 +80,6 @@ func getPassHash(username interface{}) (salt, hash []byte) {
 		salt = []byte("")
 		return
 	}
-	fmt.Printf("hash: %+v, salt: %+v\n", hash, salt)
 	return
 }
 
@@ -143,18 +140,13 @@ func getAllViews() (count int, err error) {
 	return
 }
 
-func dbChangePass(username, password, new_password string) (err error) {
-	if !check_auth || !auth.Authenticate(username, password) {
-		err = fmt.Errorf("Authentication failed!")
-		return
-	}
+func dbChangePass(username string, salt, hash []byte) (err error) {
 	db, err := dbConnect()
 	if err != nil {
 		return
 	}
-	ph := pbkdf2.HashPassword(new_password)
 	res, err := db.Exec("update users set hashed=?,salt=? where username=?",
-		ph.Hash, ph.Salt, username)
+		hash, salt, username)
 	var n int64
 	if err != nil {
 		return
@@ -182,13 +174,12 @@ func userExists(username string) (ok bool, err error) {
 	return
 }
 
-func addUserToDb(username, password string) (err error) {
-	ph := pbkdf2.HashPassword(password)
+func addUserToDb(username string, salt, hash []byte) (err error) {
 	query := "insert into users values (?, ?, ?)"
 	db, err := dbConnect()
 	if err != nil {
 		return
 	}
-	_, err = db.Exec(query, username, ph.Hash, ph.Salt)
+	_, err = db.Exec(query, username, hash, salt)
 	return
 }
