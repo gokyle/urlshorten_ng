@@ -162,7 +162,7 @@ func newShortened(w http.ResponseWriter, r *http.Request) {
 
 	user := r.Form.Get("user")
 	pass := r.Form.Get("pass")
-	if !auth.Authenticate(user, pass) {
+	if check_auth && !auth.Authenticate(user, pass) {
 		err = fmt.Errorf("Authenticated failed!")
 		serveErr(page, err, w, r)
 		return
