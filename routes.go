@@ -238,6 +238,7 @@ func getViews(w http.ResponseWriter, r *http.Request) {
 	var views string
 	if err != nil {
                 err = fmt.Errorf("invalid short code")
+                page.File = "templates/index.html"
                 serveErr(page, err, w, r)
                 return
 	} else {
