@@ -237,8 +237,9 @@ func getViews(w http.ResponseWriter, r *http.Request) {
 
 	var views string
 	if err != nil {
-		log.Println("[!] getViews error: ", err.Error())
-		views = "no views"
+                err = fmt.Errorf("invalid short code")
+                serveErr(page, err, w, r)
+                return
 	} else {
 		if count == 0 {
 			views = "no views"
