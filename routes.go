@@ -249,8 +249,15 @@ func getViews(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	page.ShortCode = sid
-	page.Views = views
-	servePage(page, w, r)
+        url, err := lookupShortCode(sid)
+        if err != nil {
+                serveErr(page, err w, r)
+        } else {
+	        page.Views = views
+                page.ShowMsg = true
+                page.Msg = url
+	        servePage(page, w, r)
+        }
 }
 
 func changePass(w http.ResponseWriter, r *http.Request) {
