@@ -251,7 +251,7 @@ func getViews(w http.ResponseWriter, r *http.Request) {
 	page.ShortCode = sid
         url, err := lookupShortCode(sid)
         if err != nil {
-                serveErr(page, err w, r)
+                serveErr(page, err, w, r)
         } else {
 	        page.Views = views
                 page.ShowMsg = true
