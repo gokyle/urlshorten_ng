@@ -100,7 +100,7 @@ func home(w http.ResponseWriter, r *http.Request) {
 func servePage(page *Page, w http.ResponseWriter, r *http.Request) {
 	page.getPageCount()
 	page.getAllViews()
-	out, err := webshell.ServeTemplateFile(page.File, page)
+	out, err := webshell.BuildTemplateFile(page.File, page)
 	if err != nil {
 		webshell.Error404(err.Error(), "text/plain", w, r)
 	} else {
