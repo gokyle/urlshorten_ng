@@ -103,7 +103,7 @@ func countShortened() (count int, err error) {
 	if err != nil {
 		return
 	}
-
+        defer db.Close()
 	query := "select count(*) from shortened"
 	rows := db.QueryRow(query)
 	err = rows.Scan(&count)
@@ -115,6 +115,7 @@ func updateSidViews(sid string) (err error) {
 	if err != nil {
 		return
 	}
+        defer db.Close()
 	_, err = db.Exec("update views set views = views + 1 where sid=?",
 		sid)
 	return
@@ -125,6 +126,7 @@ func getSidViews(sid string) (count int, err error) {
 	if err != nil {
 		return
 	}
+        defer db.Close()
 	rows := db.QueryRow("select views from views where sid=?", sid)
 	err = rows.Scan(&count)
 	return
@@ -135,6 +137,7 @@ func getAllViews() (count int, err error) {
 	if err != nil {
 		return
 	}
+        defer db.Close()
 	rows := db.QueryRow("select sum(views) from views")
 	err = rows.Scan(&count)
 	return
@@ -145,6 +148,7 @@ func dbChangePass(username string, salt, hash []byte) (err error) {
 	if err != nil {
 		return
 	}
+        defer db.Close()
 	res, err := db.Exec("update users set hashed=?,salt=? where username=?",
 		hash, salt, username)
 	var n int64
@@ -163,6 +167,7 @@ func userExists(username string) (ok bool, err error) {
 	if err != nil {
 		return
 	}
+        defer db.Close()
 	var n int
 	rows := db.QueryRow("select count(*) from users where username=?",
 		username)
@@ -180,6 +185,7 @@ func addUserToDb(username string, salt, hash []byte) (err error) {
 	if err != nil {
 		return
 	}
+        defer db.Close()
 	_, err = db.Exec(query, username, hash, salt)
 	return
 }
